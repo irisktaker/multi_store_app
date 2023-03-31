@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:multi_store_app/categories/men_category.dart';
 import 'package:multi_store_app/widgets/fake_search.dart';
 
 List<ItemData> items = [
@@ -55,7 +56,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
   Widget sideNavigator(Size size) {
     return SizedBox(
-      height: size.height * 0.80,
+      height: size.height * 0.78,
       width: size.width * 0.25,
       child: ListView.builder(
         itemCount: items.length,
@@ -97,7 +98,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
   Widget categoryView(Size size) {
     return Container(
-      height: size.height * 0.80,
+      height: size.height * 0.78,
       width: size.width * 0.75,
       color: Colors.white,
       child: PageView(
@@ -112,7 +113,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
           });
         },
         children: const [
-          Center(child: Text('men category')),
+          MenCategory(),
           Center(child: Text('women category')),
           Center(child: Text('shoes category')),
           Center(child: Text('bags category')),
