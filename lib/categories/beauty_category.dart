@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:multi_store_app/utilities/categories_list.dart';
 import 'package:multi_store_app/widgets/category_widget.dart';
 
-class MenCategory extends StatelessWidget {
-  const MenCategory({Key? key}) : super(key: key);
+class BeautyCategory extends StatelessWidget {
+  const BeautyCategory({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +21,7 @@ class MenCategory extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  const CategoryHeaderWidget(headerLabel: 'Men'),
+                  const CategoryHeaderWidget(headerLabel: 'Beauty'),
                   Expanded(
                     child: GridView.count(
                       crossAxisCount: 3,
@@ -29,13 +29,13 @@ class MenCategory extends StatelessWidget {
                       crossAxisSpacing: 10,
                       physics: const BouncingScrollPhysics(),
                       children: List.generate(
-                        men.length,
+                        beauty.length,
                         (index) {
                           return SubCategoryModel(
-                            mainCateName: 'men',
-                            subCateName: men[index],
-                            assetName: 'images/men/men$index.jpg',
-                            mainCateLabel: men[index],
+                            mainCateName: 'beauty',
+                            subCateName: beauty[index],
+                            assetName: 'images/beauty/beauty$index.jpg',
+                            mainCateLabel: beauty[index],
                           );
                         },
                       ),
@@ -48,7 +48,7 @@ class MenCategory extends StatelessWidget {
           const Positioned(
             bottom: 0,
             right: 0,
-            child: SliderBar(mainCateName: 'men'),
+            child: SliderBar(mainCateName: 'beauty'),
           )
         ],
       ),
