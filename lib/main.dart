@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:multi_store_app/main_screens/customer_home_screen.dart';
 
+import 'main_screens/supplier_home.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -20,7 +22,8 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: CustomerHomeScreen(),
+      // home: CustomerHomeScreen(),
+      home: SupplierHomeScreen(),
     );
   }
 }
