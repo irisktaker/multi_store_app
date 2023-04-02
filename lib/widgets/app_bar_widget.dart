@@ -13,6 +13,7 @@ class AppBarBackButton extends StatelessWidget {
       },
       icon: const Icon(
         Icons.arrow_back_ios_new,
+        color: Colors.black,
       ),
     );
   }
