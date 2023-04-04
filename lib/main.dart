@@ -5,6 +5,7 @@ import 'package:multi_store_app/auth/customer_signup.dart';
 import 'package:multi_store_app/main_screens/customer_home_screen.dart';
 import 'package:multi_store_app/main_screens/supplier_home.dart';
 
+import 'auth/customer_signin.dart';
 import 'main_screens/welcome.dart';
 
 void main() async {
@@ -33,6 +34,7 @@ class MyApp extends StatelessWidget {
         "/customer_home": (context) => const CustomerHomeScreen(),
         "/supplier_home": (context) => const SupplierHomeScreen(),
         "/customer_signup": (context) => const CustomerRegister(),
+        "/customer_login": (context) => const CustomerLogin(),
       },
     );
   }

@@ -199,7 +199,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                             onPressed: () {
                               Navigator.pushReplacementNamed(
                                 context,
-                                "/customer_home",
+                                "/customer_login",
                               );
                             },
                             widthRatio: 0.28,
@@ -249,7 +249,8 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                         ),
                       ),
                       processing
-                          ? const CircularProgressIndicator()
+                          ? const CircularProgressIndicator(
+                              color: Colors.purple)
                           : GoogleFacebookLogin(
                               label: 'Guest',
                               onPressed: () async {
