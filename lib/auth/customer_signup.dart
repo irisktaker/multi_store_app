@@ -1,9 +1,11 @@
 import 'dart:io';
-import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:multi_store_app/widgets/snackbar.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 import '../widgets/auth_widgets.dart';
 
@@ -25,11 +27,17 @@ class _CustomerRegisterState extends State<CustomerRegister> {
   late String name;
   late String email;
   late String password;
+  late String profileImage;
+  late String _uid;
   bool passwordVisible = false;
+  bool processing = false;
 
   final ImagePicker _picker = ImagePicker();
   XFile? _imageFile;
   dynamic _pickedImageError;
+
+  CollectionReference customers =
+      FirebaseFirestore.instance.collection('customers');
 
   void _pickImageFromCamera() async {
     try {
@@ -68,6 +76,112 @@ class _CustomerRegisterState extends State<CustomerRegister> {
         _pickedImageError = e;
       });
       print(_pickedImageError);
+    }
+  }
+
+  void signUp() async {
+    setState(() {
+      processing = true;
+    });
+    if (_formKey.currentState!.validate()) {
+      if (_imageFile != null) {
+        try {
+          // print('image picked');
+          // print('valid');
+          // print('name: $name, email: $email, password: $password');
+
+          // to create a new user in firebase
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+            email: email,
+            password: password,
+          );
+          //..
+
+          // upload customer information to firebase fire_storage
+          firebase_storage.Reference ref = firebase_storage
+              .FirebaseStorage.instance
+              .ref('customer-images/$email.jpg');
+
+          await ref.putFile(File(_imageFile!.path));
+
+          _uid = FirebaseAuth.instance.currentUser!.uid;
+
+          profileImage = await ref.getDownloadURL();
+          //..
+          // create a collection reference or instance of cloud_fire_store
+          // coz we need to take all data and send them to cloud_fire_store
+          await customers.doc(_uid).set({
+            'name': name,
+            'email': email,
+            'profileimage': profileImage,
+            'phone': '',
+            'address': '',
+            'customer_id': _uid,
+          });
+          //..
+
+          // this is to reset all values after sign up
+          _formKey.currentState!.reset();
+          setState(() {
+            _imageFile = null;
+          });
+
+          // nav to next screen
+          Navigator.pushReplacementNamed(context, '/customer_home');
+        } on FirebaseAuthException catch (e) {
+          if (e.code == 'weak-password') {
+            MyMessageHandler.showSnackBar(
+                _scaffoldKey, 'The password provided is too weak.');
+
+            setState(() {
+              processing = false;
+            });
+          } else if (e.code == 'email-already-in-use') {
+            MyMessageHandler.showSnackBar(
+                _scaffoldKey, 'The account already exist for that email');
+
+            setState(() {
+              processing = false;
+            });
+          }
+        } catch (e) {
+          print(e.toString());
+          setState(() {
+            processing = false;
+          });
+        }
+      } else {
+        MyMessageHandler.showSnackBar(_scaffoldKey, 'please pick an image');
+        setState(() {
+          processing = false;
+        });
+      }
+
+      // setState(() {
+      //   name = _nameController.text;
+      //   email = _emailController.text;
+      //   password = _passwordController.text;
+      // });
+    } else {
+      // print('not valid');
+      MyMessageHandler.showSnackBar(_scaffoldKey, 'please fill all fields');
+      setState(() {
+        processing = false;
+      });
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   const SnackBar(
+      //     duration: Duration(seconds: 2),
+      //     backgroundColor: Colors.yellow,
+      //     content: Text(
+      //       'please fill all fields',
+      //       textAlign: TextAlign.center,
+      //       style: TextStyle(
+      //         fontSize: 18,
+      //         color: Colors.black,
+      //       ),
+      //     ),
+      //   ),
+      // );
     }
   }
 
@@ -129,7 +243,7 @@ class _CustomerRegisterState extends State<CustomerRegister> {
                                     color: Colors.white,
                                   ),
                                   onPressed: () {
-                                    print('pick image from camera');
+                                    // print('pick image from camera');
                                     _pickImageFromCamera();
                                   },
                                 ),
@@ -149,7 +263,7 @@ class _CustomerRegisterState extends State<CustomerRegister> {
                                     color: Colors.white,
                                   ),
                                   onPressed: () {
-                                    print('pick image from gallery');
+                                    // print('pick image from gallery');
                                     _pickImageFromGallery();
                                   },
                                 ),
@@ -170,7 +284,7 @@ class _CustomerRegisterState extends State<CustomerRegister> {
                           // controller: _nameController,
                           onChanged: (value) {
                             name = value;
-                            print('n: $name');
+                            // print('n: $name');
                           },
                           keyboardType: TextInputType.emailAddress,
                           decoration: textFormFieldDecoration.copyWith(
@@ -195,7 +309,7 @@ class _CustomerRegisterState extends State<CustomerRegister> {
                           // controller: _emailController,
                           onChanged: (value) {
                             email = value;
-                            print('e: $email');
+                            // print('e: $email');
                           },
                           decoration: textFormFieldDecoration.copyWith(
                             labelText: "Email Address",
@@ -215,7 +329,7 @@ class _CustomerRegisterState extends State<CustomerRegister> {
                           // controller: _passwordController,
                           onChanged: (value) {
                             password = value;
-                            print('p: $password');
+                            // print('p: $password');
                           },
                           obscureText: passwordVisible,
                           decoration: textFormFieldDecoration.copyWith(
@@ -242,51 +356,14 @@ class _CustomerRegisterState extends State<CustomerRegister> {
                         actionLabel: 'Log In',
                         onPressed: () {},
                       ),
-                      AuthMainButton(
-                        mainButtonLabel: 'Sign Up',
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            if (_imageFile != null) {
-                              print('image picked');
-                              print('valid');
-                              print(
-                                  'name: $name, email: $email, password: $password');
-
-                              _formKey.currentState!.reset();
-                              setState(() {
-                                _imageFile = null;
-                              });
-                            } else {
-                              MyMessageHandler.showSnackBar(
-                                  _scaffoldKey, 'please pick an image');
-                            }
-
-                            // setState(() {
-                            //   name = _nameController.text;
-                            //   email = _emailController.text;
-                            //   password = _passwordController.text;
-                            // });
-                          } else {
-                            print('not valid');
-                            MyMessageHandler.showSnackBar(
-                                _scaffoldKey, 'please fill all fields');
-                            // ScaffoldMessenger.of(context).showSnackBar(
-                            //   const SnackBar(
-                            //     duration: Duration(seconds: 2),
-                            //     backgroundColor: Colors.yellow,
-                            //     content: Text(
-                            //       'please fill all fields',
-                            //       textAlign: TextAlign.center,
-                            //       style: TextStyle(
-                            //         fontSize: 18,
-                            //         color: Colors.black,
-                            //       ),
-                            //     ),
-                            //   ),
-                            // );
-                          }
-                        },
-                      ),
+                      processing
+                          ? const CircularProgressIndicator()
+                          : AuthMainButton(
+                              mainButtonLabel: 'Sign Up',
+                              onPressed: () {
+                                signUp();
+                              },
+                            ),
                     ],
                   ),
                 ),

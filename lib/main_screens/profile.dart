@@ -1,7 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:multi_store_app/customer_screens/customer_orders.dart';
 import 'package:multi_store_app/customer_screens/wishlist.dart';
 import 'package:multi_store_app/main_screens/cart.dart';
+import 'package:multi_store_app/widgets/alert_dialog.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -126,7 +128,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => const CartScreen(canPop: true),
+                                    builder: (context) =>
+                                        const CartScreen(canPop: true),
                                   ),
                                 );
                               },
@@ -269,10 +272,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   RepeatedListTile(
                                     title: 'Logout',
                                     icon: Icons.logout,
-                                    onPressed: () {
-                                      Navigator.pushReplacementNamed(
+                                    onPressed: () async {
+                                      MyAlertDialog.showMyDialog(
                                         context,
-                                        "/welcome_screen",
+                                        title: 'Log Out',
+                                        content: 'Are you sure to log out?',
+                                        tabNo: () {
+                                          Navigator.pop(context);
+                                        },
+                                        tabYes: () async {
+                                          await FirebaseAuth.instance.signOut();
+
+                                          Navigator.pop(context);
+                                          Navigator.pushReplacementNamed(
+                                            context,
+                                            "/welcome_screen",
+                                          );
+                                        },
                                       );
                                     },
                                   ),
@@ -318,6 +334,7 @@ class RepeatedListTile extends StatelessWidget {
   final String subtitle;
   final IconData icon;
   final Function()? onPressed;
+
   const RepeatedListTile({
     Key? key,
     required this.title,
@@ -341,6 +358,7 @@ class RepeatedListTile extends StatelessWidget {
 
 class ProfileHeaderLab extends StatelessWidget {
   final String headerLabel;
+
   const ProfileHeaderLab({
     Key? key,
     required this.headerLabel,
