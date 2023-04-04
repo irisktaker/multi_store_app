@@ -9,25 +9,21 @@ import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 import '../widgets/auth_widgets.dart';
 
-// final TextEditingController _nameController = TextEditingController();
-// final TextEditingController _emailController = TextEditingController();
-// final TextEditingController _passwordController = TextEditingController();
-
-class CustomerRegister extends StatefulWidget {
-  const CustomerRegister({Key? key}) : super(key: key);
+class SupplierRegister extends StatefulWidget {
+  const SupplierRegister({Key? key}) : super(key: key);
 
   @override
-  State<CustomerRegister> createState() => _CustomerRegisterState();
+  State<SupplierRegister> createState() => _SupplierRegisterState();
 }
 
-class _CustomerRegisterState extends State<CustomerRegister> {
+class _SupplierRegisterState extends State<SupplierRegister> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldMessengerState> _scaffoldKey =
       GlobalKey<ScaffoldMessengerState>();
-  late String name;
+  late String storeName;
   late String email;
   late String password;
-  late String profileImage;
+  late String storeLogo;
   late String _uid;
   bool passwordVisible = false;
   bool processing = false;
@@ -36,8 +32,8 @@ class _CustomerRegisterState extends State<CustomerRegister> {
   XFile? _imageFile;
   dynamic _pickedImageError;
 
-  CollectionReference customers =
-      FirebaseFirestore.instance.collection('customers');
+  CollectionReference suppliers =
+      FirebaseFirestore.instance.collection('suppliers');
 
   void _pickImageFromCamera() async {
     try {
@@ -86,48 +82,36 @@ class _CustomerRegisterState extends State<CustomerRegister> {
     if (_formKey.currentState!.validate()) {
       if (_imageFile != null) {
         try {
-          // print('image picked');
-          // print('valid');
-          // print('name: $name, email: $email, password: $password');
-
-          // to create a new user in firebase
           await FirebaseAuth.instance.createUserWithEmailAndPassword(
             email: email,
             password: password,
           );
-          //..
 
-          // upload customer information to firebase fire_storage
           firebase_storage.Reference ref = firebase_storage
               .FirebaseStorage.instance
-              .ref('customer-images/$email.jpg');
+              .ref('supplier-images/$email.jpg');
 
           await ref.putFile(File(_imageFile!.path));
 
           _uid = FirebaseAuth.instance.currentUser!.uid;
 
-          profileImage = await ref.getDownloadURL();
-          //..
-          // create a collection reference or instance of cloud_fire_store
-          // coz we need to take all data and send them to cloud_fire_store
-          await customers.doc(_uid).set({
-            'name': name,
-            'email': email,
-            'profileimage': profileImage,
-            'phone': '',
-            'address': '',
-            'customer_id': _uid,
-          });
-          //..
+          storeLogo = await ref.getDownloadURL();
 
-          // this is to reset all values after sign up
+          await suppliers.doc(_uid).set({
+            'store_name': storeName,
+            'email': email,
+            'store_logo': storeLogo,
+            'phone': '',
+            'supplier_id': _uid,
+            'cover_image': '',
+          });
+
           _formKey.currentState!.reset();
           setState(() {
             _imageFile = null;
           });
 
-          // nav to next screen
-          Navigator.pushReplacementNamed(context, '/customer_login');
+          Navigator.pushReplacementNamed(context, '/supplier_login');
         } on FirebaseAuthException catch (e) {
           if (e.code == 'weak-password') {
             MyMessageHandler.showSnackBar(
@@ -156,42 +140,13 @@ class _CustomerRegisterState extends State<CustomerRegister> {
           processing = false;
         });
       }
-
-      // setState(() {
-      //   name = _nameController.text;
-      //   email = _emailController.text;
-      //   password = _passwordController.text;
-      // });
     } else {
-      // print('not valid');
       MyMessageHandler.showSnackBar(_scaffoldKey, 'please fill all fields');
       setState(() {
         processing = false;
       });
-      // ScaffoldMessenger.of(context).showSnackBar(
-      //   const SnackBar(
-      //     duration: Duration(seconds: 2),
-      //     backgroundColor: Colors.yellow,
-      //     content: Text(
-      //       'please fill all fields',
-      //       textAlign: TextAlign.center,
-      //       style: TextStyle(
-      //         fontSize: 18,
-      //         color: Colors.black,
-      //       ),
-      //     ),
-      //   ),
-      // );
     }
   }
-
-  // @override
-  // void dispose() {
-  //   _nameController.dispose();
-  //   _emailController.dispose();
-  //   _passwordController.dispose();
-  //   super.dispose();
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -243,7 +198,6 @@ class _CustomerRegisterState extends State<CustomerRegister> {
                                     color: Colors.white,
                                   ),
                                   onPressed: () {
-                                    // print('pick image from camera');
                                     _pickImageFromCamera();
                                   },
                                 ),
@@ -263,7 +217,6 @@ class _CustomerRegisterState extends State<CustomerRegister> {
                                     color: Colors.white,
                                   ),
                                   onPressed: () {
-                                    // print('pick image from gallery');
                                     _pickImageFromGallery();
                                   },
                                 ),
@@ -281,10 +234,8 @@ class _CustomerRegisterState extends State<CustomerRegister> {
                             }
                             return null;
                           },
-                          // controller: _nameController,
                           onChanged: (value) {
-                            name = value;
-                            // print('n: $name');
+                            storeName = value;
                           },
                           keyboardType: TextInputType.emailAddress,
                           decoration: textFormFieldDecoration.copyWith(
@@ -306,10 +257,8 @@ class _CustomerRegisterState extends State<CustomerRegister> {
                             }
                             return null;
                           },
-                          // controller: _emailController,
                           onChanged: (value) {
                             email = value;
-                            // print('e: $email');
                           },
                           decoration: textFormFieldDecoration.copyWith(
                             labelText: "Email Address",
@@ -326,10 +275,8 @@ class _CustomerRegisterState extends State<CustomerRegister> {
                             }
                             return null;
                           },
-                          // controller: _passwordController,
                           onChanged: (value) {
                             password = value;
-                            // print('p: $password');
                           },
                           obscureText: passwordVisible,
                           decoration: textFormFieldDecoration.copyWith(
@@ -355,7 +302,8 @@ class _CustomerRegisterState extends State<CustomerRegister> {
                         haveAccount: 'already have account? ',
                         actionLabel: 'Log In',
                         onPressed: () {
-                          Navigator.pushReplacementNamed(context, "/customer_login");
+                          Navigator.pushReplacementNamed(
+                              context, "/customer_login");
                         },
                       ),
                       processing

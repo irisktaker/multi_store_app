@@ -89,15 +89,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               padding: const EdgeInsets.only(top: 25, left: 30),
                               child: Row(
                                 children: [
-                                  CircleAvatar(
-                                    radius: 50,
-                                    backgroundImage:
-                                        NetworkImage(data['profileimage']),
-                                  ),
+                                  data['profileimage'] == ""
+                                      ? const CircleAvatar(
+                                          radius: 50,
+                                          backgroundImage: AssetImage(
+                                              'images/inapp/guest.jpg'),
+                                        )
+                                      : CircleAvatar(
+                                          radius: 50,
+                                          backgroundImage: NetworkImage(
+                                              data['profileimage']),
+                                        ),
                                   Padding(
                                     padding: const EdgeInsets.only(left: 25),
                                     child: Text(
-                                      data['name'].toUpperCase(),
+                                      data['name'] == ''
+                                          ? 'guest'.toUpperCase()
+                                          : data['name'].toUpperCase(),
                                       style: const TextStyle(
                                         fontSize: 24,
                                         fontWeight: FontWeight.w600,
@@ -251,19 +259,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       children: [
                                         RepeatedListTile(
                                           title: 'Email Address',
-                                          subtitle: data['email'],
+                                          subtitle: data['email'] == ""
+                                              ? "example@email.com"
+                                              : data['email'],
                                           icon: Icons.email,
                                         ),
                                         const YellowDivider(),
                                         RepeatedListTile(
                                           title: 'Phone No.',
-                                          subtitle: data['phone'],
+                                          subtitle: data['phone'] == ""
+                                              ? "+111111"
+                                              : data['phone'],
                                           icon: Icons.phone,
                                         ),
                                         const YellowDivider(),
                                         RepeatedListTile(
                                           title: 'Address',
-                                          subtitle: data['address'],
+                                          subtitle: data['address'] == ""
+                                              ? "example: New Gersy - usa"
+                                              : data['address'],
                                           icon: Icons.location_pin,
                                         ),
                                       ],
