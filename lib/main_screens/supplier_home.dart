@@ -1,6 +1,7 @@
 // SupplierHome
 
 import 'package:flutter/material.dart';
+import 'package:multi_store_app/main_screens/upload_product.dart';
 
 import 'category.dart';
 import 'dashboard.dart';
@@ -21,7 +22,7 @@ class _SupplierHomeScreenState extends State<SupplierHomeScreen> {
     CategoryScreen(),
     StoresScreen(),
     DashboardScreen(),
-    Center(child: Text('upload')),
+    UploadProductScreen(),
   ];
 
   @override
