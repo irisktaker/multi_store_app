@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:multi_store_app/utilities/categories_list.dart';
 import 'package:multi_store_app/widgets/snackbar.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:path/path.dart' as path;
 
 class UploadProductScreen extends StatefulWidget {
   const UploadProductScreen({Key? key}) : super(key: key);
@@ -28,6 +30,7 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
 
   final ImagePicker _picker = ImagePicker();
   List<XFile> imagesFileList = [];
+  List<String> imageUrlList = [];
   dynamic _pickedImageError;
 
   void pickProductImages() async {
@@ -90,13 +93,29 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
     });
   }
 
-  void uploadProduct() {
+  void uploadProduct() async {
     if (mainCategoryValue != 'select category' &&
         subcategoryValue != 'subcategory') {
       if (_formKey.currentState!.validate()) {
         _formKey.currentState!.save();
 
         if (imagesFileList.isNotEmpty) {
+          try {
+            for (var image in imagesFileList) {
+              firebase_storage.Reference ref = firebase_storage
+                  .FirebaseStorage.instance
+                  .ref('products/${path.basename(image.path)}');
+
+              await ref.putFile(File(image.path)).whenComplete(() async {
+                await ref.getDownloadURL().then((value) {
+                  imageUrlList.add(value);
+                });
+              });
+            }
+          } catch (e) {
+            print(e.toString());
+          }
+
           print('images picked');
           print('valid');
           print(price);
