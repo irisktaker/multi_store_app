@@ -1,11 +1,14 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:multi_store_app/utilities/categories_list.dart';
 import 'package:multi_store_app/widgets/snackbar.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:path/path.dart' as path;
+import 'package:uuid/uuid.dart';
 
 class UploadProductScreen extends StatefulWidget {
   const UploadProductScreen({Key? key}) : super(key: key);
@@ -23,6 +26,8 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
   late int quantity;
   late String proName;
   late String proDesc;
+  late String proId;
+  bool processing = false;
 
   String mainCategoryValue = 'select category';
   String subcategoryValue = 'subcategory';
@@ -93,7 +98,7 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
     });
   }
 
-  void uploadProduct() async {
+  Future<void> uploadImages() async {
     if (mainCategoryValue != 'select category' &&
         subcategoryValue != 'subcategory') {
       if (_formKey.currentState!.validate()) {
@@ -101,6 +106,9 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
 
         if (imagesFileList.isNotEmpty) {
           try {
+            setState(() {
+              processing = true;
+            });
             for (var image in imagesFileList) {
               firebase_storage.Reference ref = firebase_storage
                   .FirebaseStorage.instance
@@ -115,20 +123,6 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
           } catch (e) {
             print(e.toString());
           }
-
-          print('images picked');
-          print('valid');
-          print(price);
-          print(quantity);
-          print(proName);
-          print(proDesc);
-
-          setState(() {
-            imagesFileList.clear();
-            mainCategoryValue = 'select category';
-            subcategoryValue = 'subcategory';
-          });
-          _formKey.currentState!.reset();
         } else {
           MyMessageHandler.showSnackBar(
             _scaffoldKey,
@@ -144,6 +138,43 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
     } else {
       MyMessageHandler.showSnackBar(_scaffoldKey, 'please select categories.');
     }
+  }
+
+  Future<void> uploadData() async {
+    if (imageUrlList.isNotEmpty) {
+// create collection
+      CollectionReference productRef =
+          FirebaseFirestore.instance.collection('products');
+
+      proId = const Uuid().v4();
+      await productRef.doc(proId).set({
+        'main-category': mainCategoryValue,
+        'sub-category': subcategoryValue,
+        'price': price,
+        'quantity': quantity,
+        'product-name': proName,
+        'product-description': proDesc,
+        'supplier-id': FirebaseAuth.instance.currentUser!.uid,
+        'product-images': imageUrlList,
+        'discount': 0,
+        'product-id': proId,
+      }).whenComplete(() {
+        setState(() {
+          imagesFileList = [];
+          subcategoryList = [];
+          imageUrlList = [];
+          mainCategoryValue = 'select category';
+          processing = false;
+        });
+        _formKey.currentState!.reset();
+      });
+    } else {
+      print('no images');
+    }
+  }
+
+  void uploadProduct() async {
+    uploadImages().whenComplete(() => uploadData());
   }
 
   @override
@@ -433,14 +464,20 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
               ),
             ),
             FloatingActionButton(
-              onPressed: () {
-                uploadProduct();
-              },
+              onPressed: processing
+                  ? null
+                  : () {
+                      uploadProduct();
+                    },
               backgroundColor: Colors.yellow,
-              child: const Icon(
-                Icons.upload,
-                color: Colors.black,
-              ),
+              child: processing
+                  ? const CircularProgressIndicator(
+                      color: Colors.purpleAccent,
+                    )
+                  : const Icon(
+                      Icons.upload,
+                      color: Colors.black,
+                    ),
             ),
           ],
         ),
