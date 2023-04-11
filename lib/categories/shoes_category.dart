@@ -29,13 +29,13 @@ class ShoesCategory extends StatelessWidget {
                       crossAxisSpacing: 10,
                       physics: const BouncingScrollPhysics(),
                       children: List.generate(
-                        shoes.length,
+                        shoes.length - 1,
                         (index) {
                           return SubCategoryModel(
                             mainCateName: 'shoes',
-                            subCateName: shoes[index],
+                            subCateName: shoes[index + 1],
                             assetName: 'images/shoes/shoes$index.jpg',
-                            mainCateLabel: shoes[index],
+                            mainCateLabel: shoes[index + 1],
                           );
                         },
                       ),

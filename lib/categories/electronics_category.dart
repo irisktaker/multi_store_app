@@ -29,13 +29,13 @@ class ElectronicsCategory extends StatelessWidget {
                       crossAxisSpacing: 10,
                       physics: const BouncingScrollPhysics(),
                       children: List.generate(
-                        electronics.length,
+                        electronics.length - 1,
                         (index) {
                           return SubCategoryModel(
                             mainCateName: 'electronics',
-                            subCateName: electronics[index],
+                            subCateName: electronics[index + 1],
                             assetName: 'images/electronics/electronics$index.jpg',
-                            mainCateLabel: electronics[index],
+                            mainCateLabel: electronics[index + 1],
                           );
                         },
                       ),

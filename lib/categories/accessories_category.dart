@@ -29,14 +29,14 @@ class AccessoriesCategory extends StatelessWidget {
                       crossAxisSpacing: 10,
                       physics: const BouncingScrollPhysics(),
                       children: List.generate(
-                        accessories.length,
+                        accessories.length - 1,
                         (index) {
                           return SubCategoryModel(
                             mainCateName: 'accessories',
-                            subCateName: accessories[index],
+                            subCateName: accessories[index + 1],
                             assetName:
                                 'images/accessories/accessories$index.jpg',
-                            mainCateLabel: accessories[index],
+                            mainCateLabel: accessories[index + 1],
                           );
                         },
                       ),

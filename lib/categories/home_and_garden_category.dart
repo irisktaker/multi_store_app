@@ -29,13 +29,13 @@ class HomeAndGardenCategory extends StatelessWidget {
                       crossAxisSpacing: 10,
                       physics: const BouncingScrollPhysics(),
                       children: List.generate(
-                        homeandgarden.length,
+                        homeandgarden.length - 1,
                         (index) {
                           return SubCategoryModel(
                             mainCateName: 'home and garden',
-                            subCateName: homeandgarden[index],
+                            subCateName: homeandgarden[index + 1],
                             assetName: 'images/homegarden/home$index.jpg',
-                            mainCateLabel: homeandgarden[index],
+                            mainCateLabel: homeandgarden[index + 1],
                           );
                         },
                       ),

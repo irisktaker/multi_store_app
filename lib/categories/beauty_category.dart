@@ -29,13 +29,13 @@ class BeautyCategory extends StatelessWidget {
                       crossAxisSpacing: 10,
                       physics: const BouncingScrollPhysics(),
                       children: List.generate(
-                        beauty.length,
+                        beauty.length-1,
                         (index) {
                           return SubCategoryModel(
                             mainCateName: 'beauty',
-                            subCateName: beauty[index],
+                            subCateName: beauty[index+1],
                             assetName: 'images/beauty/beauty$index.jpg',
-                            mainCateLabel: beauty[index],
+                            mainCateLabel: beauty[index+1],
                           );
                         },
                       ),

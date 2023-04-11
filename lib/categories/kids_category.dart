@@ -29,13 +29,13 @@ class KidsCategory extends StatelessWidget {
                       crossAxisSpacing: 10,
                       physics: const BouncingScrollPhysics(),
                       children: List.generate(
-                        kids.length,
+                        kids.length - 1,
                         (index) {
                           return SubCategoryModel(
                             mainCateName: 'kids',
-                            subCateName: kids[index],
+                            subCateName: kids[index + 1],
                             assetName: 'images/kids/kids$index.jpg',
-                            mainCateLabel: kids[index],
+                            mainCateLabel: kids[index + 1],
                           );
                         },
                       ),

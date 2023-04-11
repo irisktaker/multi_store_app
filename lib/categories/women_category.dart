@@ -29,13 +29,13 @@ class WomenCategory extends StatelessWidget {
                       crossAxisSpacing: 10,
                       physics: const BouncingScrollPhysics(),
                       children: List.generate(
-                        women.length,
+                        women.length - 1,
                         (index) {
                           return SubCategoryModel(
                             mainCateName: 'women',
-                            subCateName: women[index],
+                            subCateName: women[index + 1],
                             assetName: 'images/women/women$index.jpg',
-                            mainCateLabel: women[index],
+                            mainCateLabel: women[index + 1],
                           );
                         },
                       ),
