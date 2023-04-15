@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:multi_store_app/galleries/main_gallery.dart';
 import '../widgets/fake_search.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -23,7 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
             indicatorWeight: 8,
             indicatorColor: Colors.yellow,
             tabs: [
-              RepeatedTabs(label: "Men"),
+              MenGalleryScreen(),
               RepeatedTabs(label: "Women"),
               RepeatedTabs(label: "Shoes"),
               RepeatedTabs(label: "Bags"),
