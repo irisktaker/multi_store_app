@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:multi_store_app/galleries/main_gallery.dart';
+import 'package:multi_store_app/galleries/men_gallery.dart';
 import '../widgets/fake_search.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -15,6 +15,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return DefaultTabController(
       length: 9,
       child: Scaffold(
+        backgroundColor: Colors.blueGrey.shade100.withOpacity(0.50),
         appBar: AppBar(
           elevation: 0,
           backgroundColor: Colors.white,
@@ -24,7 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
             indicatorWeight: 8,
             indicatorColor: Colors.yellow,
             tabs: [
-              MenGalleryScreen(),
+              RepeatedTabs(label: 'Men'),
               RepeatedTabs(label: "Women"),
               RepeatedTabs(label: "Shoes"),
               RepeatedTabs(label: "Bags"),
@@ -38,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         body: const TabBarView(
           children: [
-            Center(child: Text('Men screen')),
+            MenGalleryScreen(),
             Center(child: Text('Women screen')),
             Center(child: Text('Shoes screen')),
             Center(child: Text('Bags screen')),
