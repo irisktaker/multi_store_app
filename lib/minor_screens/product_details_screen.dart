@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper_null_safety/flutter_swiper_null_safety.dart';
+import 'package:multi_store_app/main_screens/visit_store.dart';
 import 'package:multi_store_app/models/products_model.dart';
 import 'package:multi_store_app/widgets/yellow_button.dart';
 import 'package:staggered_grid_view_flutter/widgets/staggered_grid_view.dart';
 import 'package:staggered_grid_view_flutter/widgets/staggered_tile.dart';
+
+import 'full_screen_view.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
   final dynamic productList;
@@ -38,53 +41,64 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
           body: SingleChildScrollView(
             child: Column(
               children: [
-                Stack(
-                  children: [
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.45,
-                      child: Swiper(
-                        itemCount: imagesList.length,
-                        itemBuilder: (context, index) {
-                          return Image(
-                            image: NetworkImage(
-                              imagesList[index],
-                            ),
-                          );
-                        },
-                        pagination: const SwiperPagination(
-                          builder: SwiperPagination.fraction,
-                        ),
+                InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            FullScreenView(imagesList: imagesList),
                       ),
-                    ),
-                    Positioned(
-                      left: 15,
-                      top: 20,
-                      child: CircleAvatar(
-                        backgroundColor: Colors.yellow,
-                        child: IconButton(
-                          onPressed: () {
-                            Navigator.pop(context);
+                    );
+                  },
+                  child: Stack(
+                    children: [
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.45,
+                        child: Swiper(
+                          itemCount: imagesList.length,
+                          itemBuilder: (context, index) {
+                            return Image(
+                              image: NetworkImage(
+                                imagesList[index],
+                              ),
+                            );
                           },
-                          icon: const Icon(
-                            Icons.arrow_back_ios_new,
+                          pagination: const SwiperPagination(
+                            builder: SwiperPagination.fraction,
                           ),
                         ),
                       ),
-                    ),
-                    Positioned(
-                      right: 15,
-                      top: 20,
-                      child: CircleAvatar(
-                        backgroundColor: Colors.yellow,
-                        child: IconButton(
-                          onPressed: () {},
-                          icon: const Icon(
-                            Icons.share,
+                      Positioned(
+                        left: 15,
+                        top: 20,
+                        child: CircleAvatar(
+                          backgroundColor: Colors.yellow,
+                          child: IconButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            icon: const Icon(
+                              Icons.arrow_back_ios_new,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                      Positioned(
+                        right: 15,
+                        top: 20,
+                        child: CircleAvatar(
+                          backgroundColor: Colors.yellow,
+                          child: IconButton(
+                            onPressed: () {},
+                            icon: const Icon(
+                              Icons.share,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(8, 8, 8, 50),
@@ -221,7 +235,16 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 Row(
                   children: [
                     IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => VisitStore(
+                              suppliersId: widget.productList['supplier-id'],
+                            ),
+                          ),
+                        );
+                      },
                       icon: const Icon(Icons.store),
                     ),
                     const SizedBox(width: 15),

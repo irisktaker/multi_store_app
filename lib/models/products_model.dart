@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:multi_store_app/minor_screens/product_details_screen.dart';
 
@@ -59,6 +60,7 @@ class ProductModel extends StatelessWidget {
                       ),
                     ),
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         Text(
                           products['price'].toStringAsFixed(2) + ' \$',
@@ -68,13 +70,22 @@ class ProductModel extends StatelessWidget {
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        IconButton(
-                          onPressed: () {},
-                          icon: const Icon(
-                            Icons.favorite_border_outlined,
-                            color: Colors.red,
-                          ),
-                        ),
+                        products['supplier-id'] ==
+                                FirebaseAuth.instance.currentUser!.uid
+                            ? IconButton(
+                                onPressed: () {},
+                                icon: const Icon(
+                                  Icons.edit,
+                                  color: Colors.red,
+                                ),
+                              )
+                            : IconButton(
+                                onPressed: () {},
+                                icon: const Icon(
+                                  Icons.favorite_border_outlined,
+                                  color: Colors.red,
+                                ),
+                              ),
                       ],
                     ),
                   ],

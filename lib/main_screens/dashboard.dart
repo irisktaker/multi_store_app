@@ -6,6 +6,7 @@ import 'package:multi_store_app/dashboard_components/my_store.dart';
 import 'package:multi_store_app/dashboard_components/supplier_balance.dart';
 import 'package:multi_store_app/dashboard_components/supplier_orders.dart';
 import 'package:multi_store_app/dashboard_components/supplier_statics.dart';
+import 'package:multi_store_app/main_screens/visit_store.dart';
 import 'package:multi_store_app/widgets/alert_dialog.dart';
 import 'package:multi_store_app/widgets/app_bar_widget.dart';
 
@@ -27,13 +28,13 @@ List<IconData> icons = [
   Icons.show_chart,
 ];
 
-List<Widget> dashboardScreenList = const [
-  MyStore(),
-  SupplierOrders(),
-  EditBusiness(),
-  ManageProducts(),
-  BalanceScreen(),
-  StaticsScreen(),
+List<Widget> dashboardScreenList = [
+  VisitStore(suppliersId: FirebaseAuth.instance.currentUser!.uid),
+  const SupplierOrders(),
+  const EditBusiness(),
+  const ManageProducts(),
+  const BalanceScreen(),
+  const StaticsScreen(),
 ];
 
 class DashboardScreen extends StatelessWidget {
