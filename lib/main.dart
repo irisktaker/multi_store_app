@@ -6,6 +6,9 @@ import 'package:multi_store_app/auth/supplier_login.dart';
 import 'package:multi_store_app/auth/supplier_signup.dart';
 import 'package:multi_store_app/main_screens/customer_home_screen.dart';
 import 'package:multi_store_app/main_screens/supplier_home.dart';
+import 'package:multi_store_app/providers/cart_provider.dart';
+import 'package:multi_store_app/providers/wish_provider.dart';
+import 'package:provider/provider.dart';
 
 import 'auth/customer_login.dart';
 import 'main_screens/welcome.dart';
@@ -13,7 +16,19 @@ import 'main_screens/welcome.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => Cart(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => Wish(),
+        ),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
