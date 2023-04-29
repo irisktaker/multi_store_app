@@ -12,7 +12,7 @@ class CustomerOrders extends StatelessWidget {
         backgroundColor: Colors.white,
         centerTitle: true,
         title: const AppBarTitle(
-          title: 'Customer Orders',
+          title: 'Orders',
         ),
         leading: const AppBarBackButton(),
       ),

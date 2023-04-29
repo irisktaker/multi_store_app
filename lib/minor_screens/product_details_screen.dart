@@ -197,14 +197,22 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             ),
                           ],
                         ),
-                        Text(
-                          widget.productList['quantity'].toString() +
-                              (' pieces available in stock'),
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Colors.blueGrey,
-                          ),
-                        ),
+                        widget.productList['quantity'] == 0
+                            ? const Text(
+                                'Out of stock',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.blueGrey,
+                                ),
+                              )
+                            : Text(
+                                widget.productList['quantity'].toString() +
+                                    (' pieces available in stock'),
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.blueGrey,
+                                ),
+                              ),
                         const ProductDetailsHeader(
                           label: '  Item Description  ',
                         ),
@@ -337,20 +345,27 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         ? 'Added to cart'.toUpperCase()
                         : 'ADD TO CART',
                     onPressed: () {
-                      existingCartListItems != null
-                          ? MyMessageHandler.showSnackBar(
-                              _scaffoldKey,
-                              "This item is already in cart.",
-                            )
-                          : context.read<Cart>().addItem(
-                                widget.productList['product-name'],
-                                widget.productList['product-id'],
-                                widget.productList['supplier-id'],
-                                widget.productList['price'],
-                                1,
-                                widget.productList['quantity'],
-                                widget.productList['product-images'],
-                              );
+                      if (widget.productList['quantity'] == 0) {
+                        MyMessageHandler.showSnackBar(
+                          _scaffoldKey,
+                          "This item is out of stock.",
+                        );
+                      } else if (existingCartListItems != null) {
+                        MyMessageHandler.showSnackBar(
+                          _scaffoldKey,
+                          "This item is already in cart.",
+                        );
+                      } else {
+                        context.read<Cart>().addItem(
+                              widget.productList['product-name'],
+                              widget.productList['product-id'],
+                              widget.productList['supplier-id'],
+                              widget.productList['price'],
+                              1,
+                              widget.productList['quantity'],
+                              widget.productList['product-images'],
+                            );
+                      }
                     },
                     widthRatio: 0.5,
                   ),

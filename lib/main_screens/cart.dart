@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:multi_store_app/minor_screens/place_order_screen.dart';
 import 'package:multi_store_app/models/cart_model.dart';
 import 'package:multi_store_app/providers/cart_provider.dart';
 import 'package:multi_store_app/widgets/alert_dialog.dart';
@@ -84,6 +85,7 @@ class CartBottomSheetWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double total = context.watch<Cart>().totalPrice;
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Row(
@@ -99,7 +101,7 @@ class CartBottomSheetWidget extends StatelessWidget {
                 ),
               ),
               Text(
-                context.watch<Cart>().totalPrice.toStringAsFixed(2),
+                total.toStringAsFixed(2),
                 style: const TextStyle(
                   fontSize: 20,
                   color: Colors.red,
@@ -110,7 +112,16 @@ class CartBottomSheetWidget extends StatelessWidget {
           ),
           YellowButton(
             label: 'checkout',
-            onPressed: () {},
+            onPressed: total == 0.0
+                ? null
+                : () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PlaceOrderScreen(),
+                      ),
+                    );
+                  },
             widthRatio: 0.45,
           )
         ],
@@ -177,16 +188,19 @@ class CartItems extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<Cart>(builder: (context, cart, child) {
-      return ListView.builder(
-        itemCount: cart.count,
-        itemBuilder: (context, index) {
-          final product = cart.getCartItems[index];
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 65),
+        child: ListView.builder(
+          itemCount: cart.count,
+          itemBuilder: (context, index) {
+            final product = cart.getCartItems[index];
 
-          return CartModel(
-            product: product,
-            cart: context.read<Cart>(),
-          );
-        },
+            return CartModel(
+              product: product,
+              cart: context.read<Cart>(),
+            );
+          },
+        ),
       );
     });
   }
