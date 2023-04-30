@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:multi_store_app/models/customer_order_model.dart';
 import 'package:multi_store_app/widgets/app_bar_widget.dart';
 
 class CustomerOrders extends StatelessWidget {
@@ -15,6 +18,52 @@ class CustomerOrders extends StatelessWidget {
           title: 'Orders',
         ),
         leading: const AppBarBackButton(),
+      ),
+      body: StreamBuilder<QuerySnapshot>(
+        // streaming from
+        stream: FirebaseFirestore.instance
+            .collection('orders')
+            .where(
+              'customer_id',
+              isEqualTo: FirebaseAuth.instance.currentUser!.uid,
+            )
+            .snapshots(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.hasError) {
+            return const Center(child: Text("Something went wrong"));
+          }
+
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(
+                color: Colors.purple,
+              ),
+            );
+          }
+
+          if (snapshot.data!.docs.isEmpty) {
+            return const Center(
+              child: Text(
+                "You don't have\n\nitems ordered yet.",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 26,
+                  color: Colors.blueGrey,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Acme',
+                  letterSpacing: 1.5,
+                ),
+              ),
+            );
+          }
+
+          return ListView.builder(
+            itemCount: snapshot.data!.docs.length,
+            itemBuilder: (context, index) {
+              return CustomerOrderModel(order: snapshot.data!.docs[index]);
+            },
+          );
+        },
       ),
     );
   }
