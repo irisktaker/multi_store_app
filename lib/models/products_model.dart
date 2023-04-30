@@ -24,6 +24,7 @@ class _ProductModelState extends State<ProductModel> {
           );
   @override
   Widget build(BuildContext context) {
+    var onSale = widget.products['discount'];
     return InkWell(
       onTap: () {
         Navigator.push(
@@ -36,103 +37,174 @@ class _ProductModelState extends State<ProductModel> {
       },
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(15),
-          ),
-          child: Column(
-            children: [
-              ClipRRect(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(15),
-                  topRight: Radius.circular(15),
-                ),
-                child: Container(
-                  constraints: const BoxConstraints(
-                    minHeight: 100,
-                    maxHeight: 250,
-                  ),
-                  child: Image(
-                      image:
-                          NetworkImage(widget.products['product-images'][0])),
-                ),
+        child: Stack(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(15),
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
-                    Text(
-                      widget.products['product-name'],
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: Colors.grey.shade600,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
+              child: Column(
+                children: [
+                  ClipRRect(
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(15),
+                      topRight: Radius.circular(15),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    child: Container(
+                      constraints: const BoxConstraints(
+                        minHeight: 100,
+                        maxHeight: 250,
+                      ),
+                      child: Image(
+                          image: NetworkImage(
+                              widget.products['product-images'][0])),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
                       children: [
                         Text(
-                          widget.products['price'].toStringAsFixed(2) + ' \$',
+                          widget.products['product-name'],
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             color: Colors.grey.shade600,
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        widget.products['supplier-id'] ==
-                                FirebaseAuth.instance.currentUser!.uid
-                            ? IconButton(
-                                onPressed: () {},
-                                icon: const Icon(
-                                  Icons.edit,
-                                  color: Colors.red,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  '\$ ',
+                                  style: TextStyle(
+                                    color: Colors.red.shade600,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
-                              )
-                            : IconButton(
-                                onPressed: () {
-                                  existingWishlistItems != null
-                                      ? context.read<Wish>().removeThis(
-                                            widget.products['product-id'],
-                                          )
-                                      : context.read<Wish>().addWishItem(
-                                            widget.products['product-name'],
-                                            widget.products['product-id'],
-                                            widget.products['supplier-id'],
-                                            widget.products['price'],
-                                            1,
-                                            widget.products['quantity'],
-                                            widget.products['product-images'],
-                                          );
-                                },
-                                icon: context
-                                            .watch<Wish>()
-                                            .getWishItems
-                                            .firstWhereOrNull(
-                                              (product) =>
-                                                  product.documentId ==
-                                                  widget.products["product-id"],
-                                            ) !=
-                                        null
-                                    ? const Icon(
-                                        Icons.favorite,
-                                        color: Colors.red,
+                                Text(
+                                  widget.products['price'].toStringAsFixed(2),
+                                  style: onSale != 0
+                                      ? TextStyle(
+                                          color: Colors.grey.shade600,
+                                          fontSize: 11,
+                                          decoration:
+                                              TextDecoration.lineThrough,
+                                          fontWeight: FontWeight.w600,
+                                        )
+                                      : TextStyle(
+                                          color: Colors.red.shade600,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                ),
+                                const SizedBox(width: 6),
+                                onSale != 0
+                                    ? Text(
+                                        ((1 -
+                                                    (widget.products[
+                                                            'discount'] /
+                                                        100)) *
+                                                (widget.products['price']))
+                                            .toStringAsFixed(2),
+                                        style: TextStyle(
+                                          color: Colors.red.shade600,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                        ),
                                       )
-                                    : const Icon(
-                                        Icons.favorite_border_outlined,
-                                        color: Colors.red,
-                                      ),
-                              ),
+                                    : const Text(''),
+                              ],
+                            ),
+                            widget.products['supplier-id'] ==
+                                    FirebaseAuth.instance.currentUser!.uid
+                                ? IconButton(
+                                    onPressed: () {},
+                                    icon: const Icon(
+                                      Icons.edit,
+                                      color: Colors.red,
+                                    ),
+                                  )
+                                : IconButton(
+                                    onPressed: () {
+                                      existingWishlistItems != null
+                                          ? context.read<Wish>().removeThis(
+                                                widget.products['product-id'],
+                                              )
+                                          : context.read<Wish>().addWishItem(
+                                                widget.products['product-name'],
+                                                widget.products['product-id'],
+                                                widget.products['supplier-id'],
+                                                onSale != 0
+                                                    ? ((1 -
+                                                            (widget.products[
+                                                                    'discount'] /
+                                                                100)) *
+                                                        (widget
+                                                            .products['price']))
+                                                    : widget.products['price'],
+                                                1,
+                                                widget.products['quantity'],
+                                                widget
+                                                    .products['product-images'],
+                                              );
+                                    },
+                                    icon: context
+                                                .watch<Wish>()
+                                                .getWishItems
+                                                .firstWhereOrNull(
+                                                  (product) =>
+                                                      product.documentId ==
+                                                      widget.products[
+                                                          "product-id"],
+                                                ) !=
+                                            null
+                                        ? const Icon(
+                                            Icons.favorite,
+                                            color: Colors.red,
+                                          )
+                                        : const Icon(
+                                            Icons.favorite_border_outlined,
+                                            color: Colors.red,
+                                          ),
+                                  ),
+                          ],
+                        ),
                       ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+            onSale != 0
+                ? Positioned(
+                    top: 20,
+                    left: 0,
+                    child: Container(
+                      height: 25,
+                      width: 80,
+                      decoration: const BoxDecoration(
+                        color: Colors.yellow,
+                        borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(15),
+                          bottomRight: Radius.circular(15),
+                        ),
+                      ),
+                      child: Center(
+                        child: Text(
+                          'Save ' + onSale.toString() + ' %',
+                        ),
+                      ),
+                    ),
+                  )
+                : Container(),
+          ],
         ),
       ),
     );

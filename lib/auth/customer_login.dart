@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:multi_store_app/widgets/snackbar.dart';
 
@@ -20,6 +21,10 @@ class _CustomerLoginState extends State<CustomerLogin> {
   bool passwordVisible = false;
   bool processing = false;
 
+  void navigate() {
+    Navigator.pushReplacementNamed(context, '/customer_home');
+  }
+
   void login() async {
     setState(() {
       processing = true;
@@ -36,7 +41,7 @@ class _CustomerLoginState extends State<CustomerLogin> {
         _formKey.currentState!.reset();
 
         // nav to next screen
-        Navigator.pushReplacementNamed(context, '/customer_home');
+        navigate();
         //..
       } on FirebaseAuthException catch (e) {
         if (e.code == 'user-not-found') {
@@ -53,7 +58,9 @@ class _CustomerLoginState extends State<CustomerLogin> {
           });
         }
       } catch (e) {
-        print(e.toString());
+        if (kDebugMode) {
+          print(e.toString());
+        }
         setState(() {
           processing = false;
         });
@@ -159,7 +166,8 @@ class _CustomerLoginState extends State<CustomerLogin> {
                         },
                       ),
                       processing
-                          ? const Center(child: CircularProgressIndicator(
+                          ? const Center(
+                              child: CircularProgressIndicator(
                                   color: Colors.purple))
                           : AuthMainButton(
                               mainButtonLabel: 'Log In',

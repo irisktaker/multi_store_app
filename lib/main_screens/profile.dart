@@ -330,9 +330,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                     .signOut();
 
                                                 Navigator.pop(context);
-                                                Navigator.pushReplacementNamed(
-                                                  context,
-                                                  "/welcome_screen",
+
+                                                await Future.delayed(
+                                                        const Duration(
+                                                            milliseconds: 100))
+                                                    .whenComplete(
+                                                  () => Navigator
+                                                      .pushReplacementNamed(
+                                                    context,
+                                                    "/welcome_screen",
+                                                  ),
                                                 );
                                               },
                                             );

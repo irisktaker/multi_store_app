@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:multi_store_app/utilities/categories_list.dart';
@@ -24,6 +25,7 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
 
   late double price;
   late int quantity;
+  int? discount = 0;
   late String proName;
   late String proDesc;
   late String proId;
@@ -53,7 +55,9 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
       setState(() {
         _pickedImageError = e;
       });
-      print(_pickedImageError);
+      if (kDebugMode) {
+        print(_pickedImageError);
+      }
     }
   }
 
@@ -91,7 +95,9 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
       subcategoryList = bags;
     }
 
-    print(value);
+    if (kDebugMode) {
+      print(value);
+    }
     setState(() {
       mainCategoryValue = value.toString();
       subcategoryValue = 'subcategory';
@@ -121,7 +127,9 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
               });
             }
           } catch (e) {
-            print(e.toString());
+            if (kDebugMode) {
+              print(e.toString());
+            }
           }
         } else {
           MyMessageHandler.showSnackBar(
@@ -156,7 +164,7 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
         'product-description': proDesc,
         'supplier-id': FirebaseAuth.instance.currentUser!.uid,
         'product-images': imageUrlList,
-        'discount': 0,
+        'discount': discount,
         'product-id': proId,
       }).whenComplete(() {
         setState(() {
@@ -169,7 +177,9 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
         _formKey.currentState!.reset();
       });
     } else {
-      print('no images');
+      if (kDebugMode) {
+        print('no images');
+      }
     }
   }
 
@@ -312,7 +322,9 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
                                   }).toList(),
                                   value: subcategoryValue,
                                   onChanged: (value) {
-                                    print(value);
+                                    if (kDebugMode) {
+                                      print(value);
+                                    }
 
                                     setState(() {
                                       subcategoryValue = value.toString();
@@ -333,31 +345,62 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
                       thickness: 1.5,
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.40,
-                      child: TextFormField(
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return 'please enter a price.';
-                          } else if (value.isValidPrice() != true) {
-                            return 'please enter a valid price';
-                          }
-                          return null;
-                        },
-                        onSaved: (value) {
-                          price = double.parse(value!);
-                        },
-                        keyboardType: const TextInputType.numberWithOptions(
-                          decimal: true,
-                        ),
-                        decoration: textFormDecoration.copyWith(
-                          labelText: 'Price',
-                          hintText: 'price .. \$',
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.40,
+                          child: TextFormField(
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return 'please enter a price.';
+                              } else if (value.isValidPrice() != true) {
+                                return 'please enter a valid price';
+                              }
+                              return null;
+                            },
+                            onSaved: (value) {
+                              price = double.parse(value!);
+                            },
+                            keyboardType: const TextInputType.numberWithOptions(
+                              decimal: true,
+                            ),
+                            decoration: textFormDecoration.copyWith(
+                              labelText: 'Price',
+                              hintText: 'price .. \$',
+                            ),
+                          ),
                         ),
                       ),
-                    ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.40,
+                          child: TextFormField(
+                            maxLength: 2,
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return null;
+                              } else if (value.isValidDiscount() != true) {
+                                return 'invalid discount';
+                              }
+                              return null;
+                            },
+                            onSaved: (value) {
+                              discount = int.parse(value!);
+                            },
+                            keyboardType: const TextInputType.numberWithOptions(
+                              decimal: true,
+                            ),
+                            decoration: textFormDecoration.copyWith(
+                              labelText: 'Discount',
+                              hintText: 'discount .. %',
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -520,5 +563,11 @@ extension PriceValidator on String {
 
     return RegExp(r'^((([1-9][0-9]*[\.]*)||([0][\.]*))([0-9]{1,2}))$')
         .hasMatch(this);
+  }
+}
+
+extension DiscountValidator on String {
+  bool isValidDiscount() {
+    return RegExp(r'^([0-9]*)$').hasMatch(this);
   }
 }

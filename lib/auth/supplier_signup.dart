@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:multi_store_app/widgets/snackbar.dart';
@@ -51,7 +52,9 @@ class _SupplierRegisterState extends State<SupplierRegister> {
       setState(() {
         _pickedImageError = e;
       });
-      print(_pickedImageError);
+      if (kDebugMode) {
+        print(_pickedImageError);
+      }
     }
   }
 
@@ -71,7 +74,9 @@ class _SupplierRegisterState extends State<SupplierRegister> {
       setState(() {
         _pickedImageError = e;
       });
-      print(_pickedImageError);
+      if (kDebugMode) {
+        print(_pickedImageError);
+      }
     }
   }
 
@@ -129,7 +134,9 @@ class _SupplierRegisterState extends State<SupplierRegister> {
             });
           }
         } catch (e) {
-          print(e.toString());
+          if (kDebugMode) {
+            print(e.toString());
+          }
           setState(() {
             processing = false;
           });

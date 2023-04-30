@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:multi_store_app/widgets/snackbar.dart';
@@ -55,7 +56,9 @@ class _CustomerRegisterState extends State<CustomerRegister> {
       setState(() {
         _pickedImageError = e;
       });
-      print(_pickedImageError);
+      if (kDebugMode) {
+        print(_pickedImageError);
+      }
     }
   }
 
@@ -75,7 +78,9 @@ class _CustomerRegisterState extends State<CustomerRegister> {
       setState(() {
         _pickedImageError = e;
       });
-      print(_pickedImageError);
+      if (kDebugMode) {
+        print(_pickedImageError);
+      }
     }
   }
 
@@ -127,7 +132,9 @@ class _CustomerRegisterState extends State<CustomerRegister> {
           });
 
           // nav to next screen
-          Navigator.pushReplacementNamed(context, '/customer_login');
+          await Future.delayed(const Duration(milliseconds: 100)).whenComplete(
+            () => Navigator.pushReplacementNamed(context, '/customer_login'),
+          );
         } on FirebaseAuthException catch (e) {
           if (e.code == 'weak-password') {
             MyMessageHandler.showSnackBar(
@@ -145,7 +152,9 @@ class _CustomerRegisterState extends State<CustomerRegister> {
             });
           }
         } catch (e) {
-          print(e.toString());
+          if (kDebugMode) {
+            print(e.toString());
+          }
           setState(() {
             processing = false;
           });
@@ -355,7 +364,8 @@ class _CustomerRegisterState extends State<CustomerRegister> {
                         haveAccount: 'already have account? ',
                         actionLabel: 'Log In',
                         onPressed: () {
-                          Navigator.pushReplacementNamed(context, "/customer_login");
+                          Navigator.pushReplacementNamed(
+                              context, "/customer_login");
                         },
                       ),
                       processing

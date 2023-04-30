@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:multi_store_app/providers/cart_provider.dart';
@@ -250,7 +251,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       widthRatio: 1,
                       onPressed: () {
                         if (selectedValue == 1) {
-                          print('cash on delivery');
+                          if (kDebugMode) {
+                            print('cash on delivery');
+                          }
 
                           showModalBottomSheet(
                             context: context,
@@ -364,13 +367,20 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                                       );
                                                     });
                                                   }
-                                                  context
-                                                      .read<Cart>()
-                                                      .clearList();
-                                                  Navigator.popUntil(
-                                                      context,
-                                                      ModalRoute.withName(
-                                                          '/customer_home'));
+
+                                                  await Future.delayed(
+                                                          const Duration(
+                                                              milliseconds:
+                                                                  100))
+                                                      .whenComplete(() {
+                                                    context
+                                                        .read<Cart>()
+                                                        .clearList();
+                                                    Navigator.popUntil(
+                                                        context,
+                                                        ModalRoute.withName(
+                                                            '/customer_home'));
+                                                  });
 
                                                   setState(() {
                                                     process = false;
@@ -386,9 +396,13 @@ class _PaymentScreenState extends State<PaymentScreen> {
                             },
                           );
                         } else if (selectedValue == 2) {
-                          print('pay via visa / mastercard');
+                          if (kDebugMode) {
+                            print('pay via visa / mastercard');
+                          }
                         } else if (selectedValue == 3) {
-                          print('pay via paypal');
+                          if (kDebugMode) {
+                            print('pay via paypal');
+                          }
                         }
                       },
                     ),

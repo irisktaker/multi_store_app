@@ -44,6 +44,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var onSale = widget.productList['discount'];
+
     var existingWishlistItems =
         context.read<Wish>().getWishItems.firstWhereOrNull(
               (product) =>
@@ -141,23 +143,47 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           children: [
                             Row(
                               children: [
-                                const Text(
+                                Text(
                                   'USD ',
                                   style: TextStyle(
+                                    color: Colors.red.shade600,
                                     fontSize: 20,
-                                    color: Colors.red,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
                                 Text(
                                   widget.productList['price']
                                       .toStringAsFixed(2),
-                                  style: const TextStyle(
-                                    fontSize: 20,
-                                    color: Colors.red,
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                                  style: onSale != 0
+                                      ? TextStyle(
+                                          color: Colors.grey.shade600,
+                                          fontSize: 16,
+                                          decoration:
+                                              TextDecoration.lineThrough,
+                                          fontWeight: FontWeight.w600,
+                                        )
+                                      : TextStyle(
+                                          color: Colors.red.shade600,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w600,
+                                        ),
                                 ),
+                                const SizedBox(width: 6),
+                                onSale != 0
+                                    ? Text(
+                                        ((1 -
+                                                    (widget.productList[
+                                                            'discount'] /
+                                                        100)) *
+                                                (widget.productList['price']))
+                                            .toStringAsFixed(2),
+                                        style: TextStyle(
+                                          color: Colors.red.shade600,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      )
+                                    : const Text(''),
                               ],
                             ),
                             IconButton(
@@ -170,7 +196,13 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                           widget.productList['product-name'],
                                           widget.productList['product-id'],
                                           widget.productList['supplier-id'],
-                                          widget.productList['price'],
+                                          onSale
+                                              ? ((1 -
+                                                      (widget.productList[
+                                                              'discount'] /
+                                                          100)) *
+                                                  (widget.productList['price']))
+                                              : widget.productList['price'],
                                           1,
                                           widget.productList['quantity'],
                                           widget.productList['product-images'],
@@ -360,7 +392,12 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               widget.productList['product-name'],
                               widget.productList['product-id'],
                               widget.productList['supplier-id'],
-                              widget.productList['price'],
+                              onSale != 0
+                                  ? ((1 -
+                                          (widget.productList['discount'] /
+                                              100)) *
+                                      (widget.productList['price']))
+                                  : widget.productList['price'],
                               1,
                               widget.productList['quantity'],
                               widget.productList['product-images'],

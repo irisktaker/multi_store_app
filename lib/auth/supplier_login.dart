@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:multi_store_app/widgets/snackbar.dart';
 
@@ -53,7 +54,9 @@ class _CustomerLoginState extends State<SupplierLogin> {
           });
         }
       } catch (e) {
-        print(e.toString());
+        if (kDebugMode) {
+          print(e.toString());
+        }
         setState(() {
           processing = false;
         });

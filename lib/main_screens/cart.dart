@@ -118,7 +118,7 @@ class CartBottomSheetWidget extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => PlaceOrderScreen(),
+                        builder: (context) => const PlaceOrderScreen(),
                       ),
                     );
                   },
